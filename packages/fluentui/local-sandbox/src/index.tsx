@@ -1,12 +1,13 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Provider, themes, Header, Text } from '@fluentui/react';
+import { ChildWindow } from './components/App';
+import { Cleanup } from './utilities/Cleaner';
 
-const App = () => (
-  <Provider theme={themes.teams}>
-    <Header>@fluentui/local-sandbox</Header>
-    <Text>Sandbox to test Fluent UI with production React.</Text>
-  </Provider>
-);
-
-ReactDOM.render(<App />, document.querySelector('#root'));
+(function() {
+  const button = document.createElement('button');
+  button.innerHTML = 'Click to Open ChildWindow';
+  document.body.appendChild(button);
+  const listner = () => {
+    ChildWindow(Cleanup);
+    button.removeEventListener('click', listner);
+  };
+  button.addEventListener('click', listner);
+})();
