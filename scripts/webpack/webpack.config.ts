@@ -24,7 +24,7 @@ const webpackConfig: webpack.Configuration = {
     filename: __DEV__ ? '[name].js' : `[name].[${config.compiler_hash_type}].js`,
     path: config.compiler_output_path,
     pathinfo: true,
-    publicPath: config.compiler_public_path,
+    publicPath: '.',
   },
   devtool: config.compiler_devtool as webpack.Options.Devtool,
   externals: {

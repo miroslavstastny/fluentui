@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 import ExternalExampleLayout from './components/ExternalExampleLayout';
 import DocsLayout from './components/DocsLayout';
@@ -54,7 +54,7 @@ import VirtualizedTablePrototype from './prototypes/VirtualizedTable';
 import { PerfDataProvider } from './components/ComponentDoc/PerfChart';
 
 const Routes = () => (
-  <BrowserRouter basename={__BASENAME__}>
+  <HashRouter>
     <Switch>
       <Route exact path="/maximize/:exampleName/:rtl?" component={ExternalExampleLayout} />
       <DocsLayout>
@@ -124,7 +124,7 @@ const Routes = () => (
         </PerfDataProvider>
       </DocsLayout>
     </Switch>
-  </BrowserRouter>
+  </HashRouter>
 );
 
 export default Routes;

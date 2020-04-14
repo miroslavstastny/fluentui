@@ -7,8 +7,28 @@ const mathSign =
     return val > 0 ? 1 : -1;
   };
 
+function extractAnchorLink(url: string): string {
+  // URLs containing anchors:
+  // #/components/checkbox#Overview
+  // http://whatever#/components/checkbox#Overview
+
+  // URLs NOT containing anchors, by this function's definition:
+  // #/components/checkbox
+  // http://whatever#/components/checkbox
+  // #Overview
+  // http://whatever#Overview
+  const split = url.split('#');
+  if (split.length === 3) {
+    // Also remove the query if present
+    // (technically the query can't be after the hash, but this is likely with hash routing)
+    return split[2].split('?')[0];
+  }
+  return undefined;
+}
+
 const scrollToAnchor = (lastOffsetY?, lastAcceleration = 0.1) => {
-  const anchor = location.hash && document.querySelector(location.hash);
+  const anchorLink = location.hash && extractAnchorLink(location.hash);
+  const anchor = anchorLink && document.querySelector(anchorLink);
   const offsetY = window.scrollY || window.pageYOffset;
 
   // take the sticky ComponentDoc header into account when scrolling
