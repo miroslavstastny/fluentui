@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   getElementType,
   useAutoControlled,
@@ -18,7 +19,7 @@ import { getCode, keyboardKey } from '@fluentui/keyboard-key';
 import computeScrollIntoView from 'compute-scroll-into-view';
 
 import { ShorthandRenderFunction, ShorthandValue, ShorthandCollection, FluentComponentStaticProps } from '../../types';
-import Downshift, {
+import DownshiftInternal, {
   DownshiftState,
   StateChangeOptions,
   A11yStatusMessageOptions,
@@ -45,13 +46,31 @@ import { Portal } from '../Portal/Portal';
 import {
   ALIGNMENTS,
   POSITIONS,
-  Popper,
   PositioningProps,
   PopperShorthandProps,
   partitionPopperPropsFromShorthand,
 } from '../../utils/positioner';
 
 export interface DownshiftA11yStatusMessageOptions<Item> extends Required<A11yStatusMessageOptions<Item>> {}
+
+const Downshift = (props: any) => {
+  return (
+    <div>
+      {props.children({
+        getInputProps: props => props,
+        getItemProps: () => ({}),
+        getMenuProps: () => ({}),
+        getRootProps: () => ({}),
+        getToggleButtonProps: () => ({}),
+        toggleMenu: () => {},
+        highlightedIndex: 0,
+        selectItemAtIndex: () => {},
+      })}
+    </div>
+  );
+};
+
+Downshift.stateChangeTypes = DownshiftInternal.stateChangeTypes;
 
 export interface DropdownSlotClassNames {
   clearIndicator: string;
@@ -369,7 +388,6 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
   setStart();
 
   const {
-    align,
     'aria-labelledby': ariaLabelledby,
     clearable,
     clearIndicator,
@@ -397,7 +415,6 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
     loadingMessage,
     placeholder,
     position,
-    offset,
     renderItem,
     renderSelectedItem,
     search,
@@ -405,10 +422,9 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
     styles,
     toggleIndicator,
     triggerButton,
-    unstable_pinned,
     variables,
   } = props;
-  const [list, positioningProps] = partitionPopperPropsFromShorthand(props.list);
+  const [list] = partitionPopperPropsFromShorthand(props.list);
 
   const buttonRef = React.useRef<HTMLElement>();
   const inputRef = React.useRef<HTMLInputElement | undefined>() as React.MutableRefObject<HTMLInputElement | undefined>;
@@ -633,39 +649,27 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
           handleRef(innerRef, listElement);
         }}
       >
-        <Popper
-          align={align}
-          position={position}
-          offset={offset}
-          rtl={context.rtl}
-          enabled={open}
-          targetRef={containerRef}
-          unstable_pinned={unstable_pinned}
-          positioningDependencies={[items.length]}
-          {...positioningProps}
-        >
-          {List.create(list, {
-            defaultProps: () => ({
-              className: dropdownSlotClassNames.itemsList,
-              ...accessibilityMenuProps,
-              styles: resolvedStyles.list,
-              items,
-              tabIndex: search ? undefined : -1, // needs to be focused when trigger button is activated.
-              'aria-hidden': !open,
-            }),
+        {List.create(list, {
+          defaultProps: () => ({
+            className: dropdownSlotClassNames.itemsList,
+            ...accessibilityMenuProps,
+            styles: resolvedStyles.list,
+            items,
+            tabIndex: search ? undefined : -1, // needs to be focused when trigger button is activated.
+            'aria-hidden': !open,
+          }),
 
-            overrideProps: (predefinedProps: ListProps) => ({
-              onFocus: (e: React.SyntheticEvent<HTMLElement>, listProps: ListProps) => {
-                handleTriggerButtonOrListFocus();
-                _.invoke(predefinedProps, 'onClick', e, listProps);
-              },
-              onBlur: (e: React.SyntheticEvent<HTMLElement>, listProps: ListProps) => {
-                handleListBlur(e);
-                _.invoke(predefinedProps, 'onBlur', e, listProps);
-              },
-            }),
-          })}
-        </Popper>
+          // overrideProps: (predefinedProps: ListProps) => ({
+          //   onFocus: (e: React.SyntheticEvent<HTMLElement>, listProps: ListProps) => {
+          //     handleTriggerButtonOrListFocus();
+          //     _.invoke(predefinedProps, 'onClick', e, listProps);
+          //   },
+          //   onBlur: (e: React.SyntheticEvent<HTMLElement>, listProps: ListProps) => {
+          //     handleListBlur(e);
+          //     _.invoke(predefinedProps, 'onBlur', e, listProps);
+          //   },
+          // }),
+        })}
       </Ref>
     );
   };
@@ -676,25 +680,26 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
 
     const items = _.map(filteredItems, (item, index) => ({
       children: () => {
-        const selected = value.indexOf(item) !== -1;
-
-        return DropdownItem.create(item, {
-          defaultProps: () => ({
-            className: dropdownSlotClassNames.item,
-            active: highlightedIndex === index,
-            selected,
-            checkable,
-            checkableIndicator,
-            isFromKeyboard: itemIsFromKeyboard,
-            variables,
-            ...(typeof item === 'object' &&
-              !item.hasOwnProperty('key') && {
-                key: (item as any).header,
-              }),
-          }),
-          overrideProps: handleItemOverrides(item, index, getItemProps, selected),
-          render: renderItem,
-        });
+        return <li>{item}</li>;
+        // const selected = value.indexOf(item) !== -1;
+        //
+        // return DropdownItem.create(item, {
+        //   defaultProps: () => ({
+        //     className: dropdownSlotClassNames.item,
+        //     active: highlightedIndex === index,
+        //     selected,
+        //     checkable,
+        //     checkableIndicator,
+        //     isFromKeyboard: itemIsFromKeyboard,
+        //     variables,
+        //     ...(typeof item === 'object' &&
+        //       !item.hasOwnProperty('key') && {
+        //         key: (item as any).header,
+        //       }),
+        //   }),
+        //   overrideProps: handleItemOverrides(item, index, getItemProps, selected),
+        //   render: renderItem,
+        // });
       },
     }));
 
@@ -1281,12 +1286,12 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
     }
   };
 
-  const handleListBlur = e => {
-    if (buttonRef.current !== e.relatedTarget) {
-      setFocused(false);
-      setIsFromKeyboard(detectIsFromKeyboard());
-    }
-  };
+  // const handleListBlur = e => {
+  //   if (buttonRef.current !== e.relatedTarget) {
+  //     setFocused(false);
+  //     setIsFromKeyboard(detectIsFromKeyboard());
+  //   }
+  // };
 
   /**
    * Sets highlightedIndex to be the item that starts with the character keys the
@@ -1351,6 +1356,12 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
 
     setStateAndInvokeHandler(['onChange'], null, { value: newValue });
   };
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setSearchQuery('2');
+  //   }, 5000);
+  // }, []);
 
   /**
    * Calls setState and invokes event handler exposed to user.
