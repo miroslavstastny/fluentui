@@ -1,4 +1,5 @@
 import * as webpack from 'webpack';
+const path = require('path');
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -47,6 +48,7 @@ const webpackConfig: webpack.Configuration = {
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
+    modules: [path.resolve(__dirname, 'node_modules'), 'node_modules'],
   },
   performance: {
     hints: false, // to (temporarily) disable "WARNING in entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit")

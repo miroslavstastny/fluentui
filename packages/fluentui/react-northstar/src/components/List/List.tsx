@@ -138,25 +138,26 @@ export const List: ComponentWithAs<'ul', ListProps> &
     rtl: context.rtl,
   });
 
-  const latestProps = React.useRef<ListProps>(props);
-  latestProps.current = props;
+  // const latestProps = React.useRef<ListProps>(props);
+  // latestProps.current = props;
 
   const ElementType = getElementType(props);
   const unhandledProps = useUnhandledProps(List.handledProps, props);
 
   const hasContent = childrenExist(children) || (items && items.length > 0);
-  const onItemClick = React.useCallback(
-    (e, itemIndex) => {
-      if (latestProps.current.selectable) {
-        setSelectedIndex(itemIndex);
-        _.invoke(latestProps.current, 'onSelectedIndexChange', e, {
-          ...latestProps.current,
-          selectedIndex: itemIndex,
-        });
-      }
-    },
-    [latestProps, setSelectedIndex],
-  );
+  const onItemClick = _.noop;
+  // const onItemClick = React.useCallback(
+  //   (e, itemIndex) => {
+  //     if (latestProps.current.selectable) {
+  //       setSelectedIndex(itemIndex);
+  //       _.invoke(latestProps.current, 'onSelectedIndexChange', e, {
+  //         ...latestProps.current,
+  //         selectedIndex: itemIndex,
+  //       });
+  //     }
+  //   },
+  //   [latestProps, setSelectedIndex],
+  // );
 
   const childProps: ListContextValue = {
     debug,

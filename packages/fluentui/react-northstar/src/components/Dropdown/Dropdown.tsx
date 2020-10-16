@@ -46,6 +46,7 @@ import { Portal } from '../Portal/Portal';
 import {
   ALIGNMENTS,
   POSITIONS,
+  Popper,
   PositioningProps,
   PopperShorthandProps,
   partitionPopperPropsFromShorthand,
@@ -57,7 +58,7 @@ const Downshift = (props: any) => {
   return (
     <div>
       {props.children({
-        getInputProps: props => props,
+        getInputProps: props => props ?? { accessibilityMenuProps: {} },
         getItemProps: () => ({}),
         getMenuProps: () => ({}),
         getRootProps: () => ({}),
@@ -333,34 +334,40 @@ function getFilteredValues(
     value: ShorthandCollection<DropdownItemProps>;
   },
 ) {
-  const { items, itemToString, itemToValue, multiple, search, searchQuery, value } = options;
-
-  const filteredItemsByValue = multiple ? _.differenceBy(items, value, itemToValue) : items;
-  const filteredItemStrings = _.map(filteredItemsByValue, filteredItem => itemToString(filteredItem).toLowerCase());
-
-  if (search) {
-    if (_.isFunction(search)) {
-      return {
-        filteredItems: search(filteredItemsByValue, searchQuery),
-        filteredItemStrings,
-      };
-    }
-
-    return {
-      filteredItems: filteredItemsByValue.filter(
-        item =>
-          itemToString(item)
-            .toLowerCase()
-            .indexOf(searchQuery.toLowerCase()) !== -1,
-      ),
-      filteredItemStrings,
-    };
-  }
-
+  const { items, itemToString } = options;
   return {
-    filteredItems: filteredItemsByValue,
-    filteredItemStrings,
+    filteredItems: items,
+    filteredItemsString: _.map(items, filteredItem => itemToString(filteredItem).toLowerCase()),
   };
+
+  // const { items, itemToString, itemToValue, multiple, search, searchQuery, value } = options;
+  //
+  // const filteredItemsByValue = multiple ? _.differenceBy(items, value, itemToValue) : items;
+  // const filteredItemStrings = _.map(filteredItemsByValue, filteredItem => itemToString(filteredItem).toLowerCase());
+  //
+  // if (search) {
+  //   if (_.isFunction(search)) {
+  //     return {
+  //       filteredItems: search(filteredItemsByValue, searchQuery),
+  //       filteredItemStrings,
+  //     };
+  //   }
+  //
+  //   return {
+  //     filteredItems: filteredItemsByValue.filter(
+  //       item =>
+  //         itemToString(item)
+  //           .toLowerCase()
+  //           .indexOf(searchQuery.toLowerCase()) !== -1,
+  //     ),
+  //     filteredItemStrings,
+  //   };
+  // }
+  //
+  // return {
+  //   filteredItems: filteredItemsByValue,
+  //   filteredItemStrings,
+  // };
 }
 
 const isEmpty = prop => {
@@ -388,6 +395,7 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
   setStart();
 
   const {
+    align,
     'aria-labelledby': ariaLabelledby,
     clearable,
     clearIndicator,
@@ -415,6 +423,7 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
     loadingMessage,
     placeholder,
     position,
+    offset,
     renderItem,
     renderSelectedItem,
     search,
@@ -422,9 +431,10 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
     styles,
     toggleIndicator,
     triggerButton,
+    unstable_pinned,
     variables,
   } = props;
-  const [list] = partitionPopperPropsFromShorthand(props.list);
+  const [list, positioningProps] = partitionPopperPropsFromShorthand(props.list);
 
   const buttonRef = React.useRef<HTMLElement>();
   const inputRef = React.useRef<HTMLInputElement | undefined>() as React.MutableRefObject<HTMLInputElement | undefined>;
@@ -642,36 +652,42 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
       };
     }
 
-    return (
-      <Ref
-        innerRef={(listElement: HTMLElement) => {
-          handleRef(listRef, listElement);
-          handleRef(innerRef, listElement);
-        }}
-      >
-        {List.create(list, {
-          defaultProps: () => ({
-            className: dropdownSlotClassNames.itemsList,
-            ...accessibilityMenuProps,
-            styles: resolvedStyles.list,
-            items,
-            tabIndex: search ? undefined : -1, // needs to be focused when trigger button is activated.
-            'aria-hidden': !open,
-          }),
-
-          // overrideProps: (predefinedProps: ListProps) => ({
-          //   onFocus: (e: React.SyntheticEvent<HTMLElement>, listProps: ListProps) => {
-          //     handleTriggerButtonOrListFocus();
-          //     _.invoke(predefinedProps, 'onClick', e, listProps);
-          //   },
-          //   onBlur: (e: React.SyntheticEvent<HTMLElement>, listProps: ListProps) => {
-          //     handleListBlur(e);
-          //     _.invoke(predefinedProps, 'onBlur', e, listProps);
-          //   },
-          // }),
-        })}
-      </Ref>
-    );
+    return items.map(i => i.children());
+    // return (
+    //   <Popper
+    //     align={align}
+    //     position={position}
+    //     offset={offset}
+    //     rtl={context.rtl}
+    //     enabled={open}
+    //     targetRef={containerRef}
+    //     unstable_pinned={unstable_pinned}
+    //     positioningDependencies={[items.length]}
+    //     {...positioningProps}
+    //   >
+    //     {List.create(list, {
+    //       defaultProps: () => ({
+    //         className: dropdownSlotClassNames.itemsList,
+    //         ...accessibilityMenuProps,
+    //         styles: resolvedStyles.list,
+    //         items,
+    //         tabIndex: search ? undefined : -1, // needs to be focused when trigger button is activated.
+    //         'aria-hidden': !open,
+    //       }),
+    //
+    //       overrideProps: (predefinedProps: ListProps) => ({
+    //         onFocus: (e: React.SyntheticEvent<HTMLElement>, listProps: ListProps) => {
+    //           handleTriggerButtonOrListFocus();
+    //           _.invoke(predefinedProps, 'onClick', e, listProps);
+    //         },
+    //         onBlur: (e: React.SyntheticEvent<HTMLElement>, listProps: ListProps) => {
+    //           handleListBlur(e);
+    //           _.invoke(predefinedProps, 'onBlur', e, listProps);
+    //         },
+    //       }),
+    //     })}
+    //   </Popper>
+    // );
   };
 
   const renderItems = (getItemProps: (options: GetItemPropsOptions<ShorthandValue<DropdownItemProps>>) => any) => {
@@ -680,7 +696,7 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
 
     const items = _.map(filteredItems, (item, index) => ({
       children: () => {
-        return <li>{item}</li>;
+        return <p key={item}>{item}</p>;
         // const selected = value.indexOf(item) !== -1;
         //
         // return DropdownItem.create(item, {
@@ -1070,47 +1086,47 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
       // getInputProps adds Downshift handlers. We also add our own by passing them as params to that function.
       // user handlers were also added to our handlers previously, at the beginning of this function.
       accessibilityInputProps: {
-        ...getInputProps({
-          disabled,
-          onBlur: e => {
-            handleInputBlur(e, predefinedProps);
-          },
-          onKeyDown: e => {
-            handleInputKeyDown(e, predefinedProps);
-          },
-          onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-            // we prevent the onChange input event to bubble up to our Dropdown handler,
-            // since in Dropdown it gets handled as onSearchQueryChange.
-            e.stopPropagation();
-
-            // A state modification should be triggered there otherwise it will go to an another frame and will break
-            // cursor position:
-            // https://github.com/facebook/react/issues/955#issuecomment-469352730
-            setSearchQuery(e.target.value);
-          },
-        }),
+        // ...getInputProps({
+        // disabled,
+        // onBlur: e => {
+        //   handleInputBlur(e, predefinedProps);
+        // },
+        // onKeyDown: e => {
+        //   handleInputKeyDown(e, predefinedProps);
+        // },
+        // onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        //   // we prevent the onChange input event to bubble up to our Dropdown handler,
+        //   // since in Dropdown it gets handled as onSearchQueryChange.
+        //   e.stopPropagation();
+        //
+        //   // A state modification should be triggered there otherwise it will go to an another frame and will break
+        //   // cursor position:
+        //   // https://github.com/facebook/react/issues/955#issuecomment-469352730
+        //   setSearchQuery(e.target.value);
+        // },
+        // }),
       },
-      // same story as above for getRootProps.
-      accessibilityComboboxProps,
-
-      inputRef: (node: HTMLInputElement) => {
-        handleRef(predefinedProps.inputRef, node);
-        inputRef.current = node;
-      },
-      onFocus: (e: React.FocusEvent, searchInputProps: DropdownSearchInputProps) => {
-        if (!disabled) {
-          setFocused(true);
-          setIsFromKeyboard(detectIsFromKeyboard());
-        }
-
-        _.invoke(predefinedProps, 'onFocus', e, searchInputProps);
-      },
-      onInputBlur: (e: React.FocusEvent, searchInputProps: DropdownSearchInputProps) => {
-        handleInputBlur(e, searchInputProps);
-      },
-      onInputKeyDown: (e: React.KeyboardEvent<HTMLInputElement>, searchInputProps: DropdownSearchInputProps) => {
-        handleInputKeyDown(e, searchInputProps);
-      },
+      // // same story as above for getRootProps.
+      // accessibilityComboboxProps,
+      //
+      // inputRef: (node: HTMLInputElement) => {
+      //   handleRef(predefinedProps.inputRef, node);
+      //   inputRef.current = node;
+      // },
+      // onFocus: (e: React.FocusEvent, searchInputProps: DropdownSearchInputProps) => {
+      //   if (!disabled) {
+      //     setFocused(true);
+      //     setIsFromKeyboard(detectIsFromKeyboard());
+      //   }
+      //
+      //   _.invoke(predefinedProps, 'onFocus', e, searchInputProps);
+      // },
+      // onInputBlur: (e: React.FocusEvent, searchInputProps: DropdownSearchInputProps) => {
+      //   handleInputBlur(e, searchInputProps);
+      // },
+      // onInputKeyDown: (e: React.KeyboardEvent<HTMLInputElement>, searchInputProps: DropdownSearchInputProps) => {
+      //   handleInputKeyDown(e, searchInputProps);
+      // },
     };
   };
 
@@ -1286,12 +1302,12 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
     }
   };
 
-  // const handleListBlur = e => {
-  //   if (buttonRef.current !== e.relatedTarget) {
-  //     setFocused(false);
-  //     setIsFromKeyboard(detectIsFromKeyboard());
-  //   }
-  // };
+  const handleListBlur = e => {
+    if (buttonRef.current !== e.relatedTarget) {
+      setFocused(false);
+      setIsFromKeyboard(detectIsFromKeyboard());
+    }
+  };
 
   /**
    * Sets highlightedIndex to be the item that starts with the character keys the
@@ -1356,12 +1372,6 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
 
     setStateAndInvokeHandler(['onChange'], null, { value: newValue });
   };
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setSearchQuery('2');
-  //   }, 5000);
-  // }, []);
 
   /**
    * Calls setState and invokes event handler exposed to user.
@@ -1469,6 +1479,15 @@ export const Dropdown: ComponentWithAs<'div', DropdownProps> &
 
     return null;
   };
+
+  // React.useEffect(() => {
+  //   setTimeout(() => {
+  //     setSearchQuery('2');
+  //   }, 2000);
+  //   setTimeout(() => {
+  //     setSearchQuery('3');
+  //   }, 4000);
+  // }, []);
 
   /**
    * Function that sets and cleans the selection message after it has been set,

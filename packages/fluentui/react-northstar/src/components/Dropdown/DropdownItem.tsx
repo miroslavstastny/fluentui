@@ -120,9 +120,9 @@ export const DropdownItem: ComponentWithAs<'li', DropdownItemProps> &
   const ElementType = getElementType(props);
   const unhandledProps = useUnhandledProps(DropdownItem.handledProps, props);
 
-  // const handleClick = (e: React.MouseEvent | React.KeyboardEvent) => {
-  //   _.invoke(props, 'onClick', e, props);
-  // };
+  const handleClick = (e: React.MouseEvent | React.KeyboardEvent) => {
+    _.invoke(props, 'onClick', e, props);
+  };
 
   const contentElement = Box.create(content, {
     defaultProps: () => ({
@@ -162,12 +162,8 @@ export const DropdownItem: ComponentWithAs<'li', DropdownItemProps> &
     },
   );
 
-  delete accessibilityItemProps.onClick;
-  delete accessibilityItemProps.onMouseDown;
-  delete accessibilityItemProps.onMouseMove;
-
   const element = (
-    <ElementType className={classes.root} /*onClick={handleClick}*/ {...accessibilityItemProps} {...unhandledProps}>
+    <ElementType className={classes.root} onClick={handleClick} {...accessibilityItemProps} {...unhandledProps}>
       {imageElement}
 
       <div className={cx(dropdownItemSlotClassNames.main, classes.main)}>
