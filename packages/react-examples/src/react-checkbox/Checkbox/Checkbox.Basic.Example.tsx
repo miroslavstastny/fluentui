@@ -23,3 +23,8 @@ export const CheckboxBasicExample: React.FunctionComponent = () => {
 function _onChange(ev?: React.FormEvent<HTMLElement | HTMLInputElement>, isChecked?: boolean) {
   console.log(`The option has been changed to ${isChecked}.`);
 }
+
+export default {
+  title: 'Checkbox.Basic',
+  component: Checkbox,
+};

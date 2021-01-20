@@ -207,3 +207,8 @@ export const MenuButtonsWithCustomMenus = () => (
     </div>
   </Stack>
 );
+
+export default {
+  title: 'MenuButton',
+  component: MenuButton,
+};

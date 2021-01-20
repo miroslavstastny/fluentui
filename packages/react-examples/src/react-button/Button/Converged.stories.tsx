@@ -83,3 +83,7 @@ export const ThemeExample = () => {
     </Stack>
   );
 };
+export default {
+  title: 'Converged Button',
+  component: Button,
+};

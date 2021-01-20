@@ -255,3 +255,8 @@ export const ButtonsWithVariants = () => (
     </Stack>
   </ThemeProvider>
 );
+
+export default {
+  title: 'Button',
+  component: Button,
+};
