@@ -58,7 +58,7 @@ function loadStories() {
   ];
 
   // @ts-ignore
-  if ('PACKAGE_NAME' === 'react') {
+  if ('PACKAGE_NAME' === 'react' || 'PACKAGE_NAME' === 'react-converged') {
     // For the @fluentui/react storybook, also show the examples of re-exported component packages.
     // preview-loader will replace REACT_ DEPS with the actual list.
     // Note that the regex intentionally goes only one directory below the package name
