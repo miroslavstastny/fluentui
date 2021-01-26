@@ -22,23 +22,32 @@
     "just": "just-scripts",
     "lint": "just-scripts lint",
     "start": "just-scripts dev:storybook",
-    "update-api": "just-scripts update-api"
+    "update-api": "just-scripts update-api",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
     "@fluentui/eslint-plugin": "^1.0.0-beta.0",
+    "@fluentui/scripts": "^1.0.0",
+    "@storybook/addon-actions": "^6.1.14",
+    "@storybook/addon-essentials": "^6.1.14",
+    "@storybook/addon-links": "^6.1.14",
+    "@storybook/react": "^6.1.14",
     "@types/react": "16.8.25",
     "@types/react-dom": "16.8.4",
     "@types/webpack-env": "1.15.1",
-    "@fluentui/scripts": "^1.0.0",
+    "babel-loader": "^8.2.2",
+    "chromatic": "^5.6.0",
     "react": "16.8.6",
     "react-app-polyfill": "~1.0.1",
     "react-dom": "16.8.6"
   },
   "dependencies": {
-    "@fluentui/set-version": "^8.0.0-beta.0",
-    "tslib": "^1.10.0",
     "@fluentui/react-button": "^1.0.0-beta.20",
-    "@fluentui/react-checkbox": "^1.0.0-beta.20"
+    "@fluentui/react-checkbox": "^1.0.0-beta.20",
+    "@fluentui/set-version": "^8.0.0-beta.0",
+    "tslib": "^1.10.0"
   },
   "peerDependencies": {
     "@types/react": ">=16.8.0 <17.0.0",
