@@ -12,6 +12,7 @@ export default {
       name: '@storybook/addon-knobs',
       options: { escapeHTML: false },
     },
+    '@fluentui/storybook/lib/addons/fluent-tokens/register',
   ],
   webpackFinal: (/** @type {webpack.Configuration} */ config) => {
     const customConfig = custom(config);
