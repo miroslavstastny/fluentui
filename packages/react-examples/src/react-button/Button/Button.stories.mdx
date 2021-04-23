@@ -1,0 +1,58 @@
+import { ArgsTable, Canvas, Meta, Story } from '@storybook/addon-docs/blocks';
+import { Button } from '@fluentui/react-button';
+import * as stories from './Button.st';
+
+<Meta
+  title="Components/Button (react-button)"
+  component={Button}
+  parameters={{}}
+  argTypes={{
+    children: {
+      name: 'Content',
+    },
+    primary: {
+      control: {
+        type: 'boolean',
+      },
+    },
+    subtle: {
+      control: {
+        type: 'boolean',
+      },
+    },
+  }}
+/>
+
+# Button
+
+A Button enables users to take an action, such as submitting a form, opening a dialog, etc.
+
+<Story name="_README" parameters={{ viewMode: 'docs' }} />
+
+<ArgsTable of={Button} />
+
+export const Template = (args) => <Button {...args} />;
+
+<Canvas>
+  <Story name="Default" args={{ children: 'Default' }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+A button can be formatted to show different levels of emphasis.
+
+<Canvas>
+  <Story name="Primary" args={{ primary: true, children: 'Primary' }}>
+    {Template.bind({})}
+  </Story>
+  <Story name="Subtle" args={{ subtle: true, children: 'Subtle' }}>
+    {Template.bind({})}
+  </Story>
+</Canvas>
+
+Text only
+
+<Canvas>
+  <Story story={stories.TextOnly} />
+  <Story story={stories.TextOnlyLong} />
+</Canvas>

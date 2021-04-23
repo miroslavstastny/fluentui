@@ -31,8 +31,8 @@ export const Default = () => <AppearanceExample />;
 // Anatomy & Layout
 //
 
-export const TextOnly = () => <Button>Text</Button>;
-export const TextOnlyLong = () => <Button>Text truncates after it hits the max width token value</Button>;
+// export const TextOnly = () => <Button>Text</Button>;
+// export const TextOnlyLong = () => <Button>Text truncates after it hits the max width token value</Button>;
 
 export const IconWithText = () => (
   <>
