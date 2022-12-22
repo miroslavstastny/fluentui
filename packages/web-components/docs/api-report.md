@@ -4,8 +4,33 @@
 
 ```ts
 
+import { FASTElement } from '@microsoft/fast-element';
+import { FASTElementDefinition } from '@microsoft/fast-element';
+
 // @public (undocumented)
-export const empty = "";
+export class Popover extends FASTElement {
+    // (undocumented)
+    anchorRef: HTMLElement[];
+    // (undocumented)
+    arrow: boolean;
+    // (undocumented)
+    arrowRef: FASTElement;
+    // (undocumented)
+    connectedCallback(): void;
+    // (undocumented)
+    disconnectedCallback(): void;
+    // (undocumented)
+    open: boolean;
+    // (undocumented)
+    protected openChanged(): void;
+    // (undocumented)
+    popoverContentRef: FASTElement;
+    // (undocumented)
+    position: 'top' | 'bottom' | 'left' | 'right';
+}
+
+// @public (undocumented)
+export const popoverDefinition: FASTElementDefinition<typeof Popover>;
 
 // (No @packageDocumentation comment for this package)
 
